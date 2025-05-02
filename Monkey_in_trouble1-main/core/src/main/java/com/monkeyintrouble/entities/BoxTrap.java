@@ -51,19 +51,19 @@ public class BoxTrap {
     public void update(float deltaTime) {
         // Check if pushable box is on button
         if (!isTriggered) {
+            // Get the exact positions for debugging
+            System.out.println("Box position: (" + pushableBoxX + ", " + pushableBoxY + ")");
+            System.out.println("Button position: (" + buttonX + ", " + buttonY + ")");
+            
+            // Check for overlap
             boolean isOverlapping = pushableBoxHitbox.overlaps(buttonHitbox);
-            System.out.println("Box hitbox: x=" + pushableBoxHitbox.x + ", y=" + pushableBoxHitbox.y +
-                             ", w=" + pushableBoxHitbox.width + ", h=" + pushableBoxHitbox.height);
-            System.out.println("Button hitbox: x=" + buttonHitbox.x + ", y=" + buttonHitbox.y +
-                             ", w=" + buttonHitbox.width + ", h=" + buttonHitbox.height);
-            System.out.println("Box and button overlapping: " + isOverlapping);
+            System.out.println("Checking overlap status: " + isOverlapping);
 
             if (isOverlapping) {
                 isTriggered = true;
-                System.out.println("*********************************");
-                System.out.println("*     Box placed on button!     *");
-                System.out.println("*     The door is now open!     *");
-                System.out.println("*********************************");
+                System.out.println("\n*********************************");
+                System.out.println("*       test succeeded          *");
+                System.out.println("*********************************\n");
             }
         }
     }
@@ -102,14 +102,18 @@ public class BoxTrap {
         pushableBoxY += deltaY;
         pushableBoxHitbox.x = pushableBoxX;
         pushableBoxHitbox.y = pushableBoxY;
-
-        // Print debug information
-        System.out.println("Box moved to: (" + pushableBoxX + ", " + pushableBoxY + ")");
-        System.out.println("Box hitbox: x=" + pushableBoxHitbox.x + ", y=" + pushableBoxHitbox.y +
-                         ", w=" + pushableBoxHitbox.width + ", h=" + pushableBoxHitbox.height);
-        System.out.println("Button hitbox: x=" + buttonHitbox.x + ", y=" + buttonHitbox.y +
-                         ", w=" + buttonHitbox.width + ", h=" + buttonHitbox.height);
-        System.out.println("Box and button overlapping: " + pushableBoxHitbox.overlaps(buttonHitbox));
+        
+        // Print detailed position information
+        System.out.println("\nBox moved:");
+        System.out.println("New box position: (" + pushableBoxX + ", " + pushableBoxY + ")");
+        System.out.println("Box hitbox: x=" + pushableBoxHitbox.x + 
+                         ", y=" + pushableBoxHitbox.y + 
+                         ", w=" + pushableBoxHitbox.width + 
+                         ", h=" + pushableBoxHitbox.height);
+        System.out.println("Button hitbox: x=" + buttonHitbox.x + 
+                         ", y=" + buttonHitbox.y + 
+                         ", w=" + buttonHitbox.width + 
+                         ", h=" + buttonHitbox.height);
     }
 
     public boolean isTriggered() {
