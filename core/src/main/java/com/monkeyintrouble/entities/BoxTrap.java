@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.Gdx;
+import com.monkeyintrouble.ui.GameUI;
 
 public class BoxTrap {
     private static final float TILE_SIZE = 32f;
@@ -30,8 +30,9 @@ public class BoxTrap {
     private final Rectangle pushableBoxHitbox;
     private float pushableBoxX;
     private float pushableBoxY;
+    private final GameUI gameUI;
 
-    public BoxTrap(float trapX, float trapY, float boxX, float boxY, float buttonX, float buttonY, float pushableBoxX, float pushableBoxY) {
+    public BoxTrap(float trapX, float trapY, float boxX, float boxY, float buttonX, float buttonY, float pushableBoxX, float pushableBoxY, GameUI gameUI) {
         this.trapX = trapX;
         this.trapY = trapY;
         this.boxX = boxX;
@@ -41,6 +42,7 @@ public class BoxTrap {
         this.pushableBoxX = pushableBoxX;
         this.pushableBoxY = pushableBoxY;
         this.isTriggered = false;
+        this.gameUI = gameUI;
 
         // Create hitboxes
         this.trapHitbox = new Rectangle(trapX, trapY, TILE_SIZE, TILE_SIZE);
@@ -62,6 +64,7 @@ public class BoxTrap {
 
             if (isOverlapping) {
                 isTriggered = true;
+                gameUI.setSuccessMessage("test succeeded");
                 System.out.println("\n*********************************");
                 System.out.println("*       test succeeded          *");
                 System.out.println("*********************************\n");
@@ -103,18 +106,26 @@ public class BoxTrap {
         pushableBoxY += deltaY;
         pushableBoxHitbox.x = pushableBoxX;
         pushableBoxHitbox.y = pushableBoxY;
-        
-        // Print detailed position information using Gdx.app.log
-        Gdx.app.log("BoxTrap", "\nBox moved:");
-        Gdx.app.log("BoxTrap", "New box position: (" + pushableBoxX + ", " + pushableBoxY + ")");
-        Gdx.app.log("BoxTrap", "Box hitbox: x=" + pushableBoxHitbox.x + 
+
+        // Print detailed position information
+        System.out.println("\n=========================================");
+        System.out.println("BOX MOVEMENT TRACKING");
+        System.out.println("=========================================");
+        System.out.println("Box moved by: (" + deltaX + ", " + deltaY + ")");
+        System.out.println("New box position: (" + pushableBoxX + ", " + pushableBoxY + ")");
+        System.out.println("Box hitbox: x=" + pushableBoxHitbox.x + 
                          ", y=" + pushableBoxHitbox.y + 
                          ", w=" + pushableBoxHitbox.width + 
                          ", h=" + pushableBoxHitbox.height);
-        Gdx.app.log("BoxTrap", "Button hitbox: x=" + buttonHitbox.x + 
+        System.out.println("Button position: (" + buttonX + ", " + buttonY + ")");
+        System.out.println("Button hitbox: x=" + buttonHitbox.x + 
                          ", y=" + buttonHitbox.y + 
                          ", w=" + buttonHitbox.width + 
                          ", h=" + buttonHitbox.height);
+        System.out.println("Distance to button: " + 
+                         Math.sqrt(Math.pow(pushableBoxX - buttonX, 2) + 
+                                 Math.pow(pushableBoxY - buttonY, 2)));
+        System.out.println("=========================================\n");
     }
 
     public boolean isTriggered() {
@@ -128,4 +139,4 @@ public class BoxTrap {
         pushableBoxHitbox.x = pushableBoxX;
         pushableBoxHitbox.y = pushableBoxY;
     }
-}
+} 
