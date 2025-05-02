@@ -27,7 +27,6 @@ public class GameMap implements Disposable {
     private static final int MAX_BANANAS = 3; // Maximum number of bananas allowed
     private boolean asset56Changed = false;
     private boolean asset29Changed = false;
-    private boolean buttonPressedByBox = false;  // Add this line to track if button was pressed by box
     private final List<Position> originalDoorPositions = new ArrayList<>();  // Track original door positions
     private float teleportCooldown = 0f;  // Add teleport cooldown timer
     private static final float TELEPORT_COOLDOWN_DURATION = 1.0f;  // 1 second cooldown
@@ -194,48 +193,27 @@ public class GameMap implements Disposable {
     }
 
     public void update(float deltaTime) {
-        // Check for box collisions with button
-        for (Box box : boxes) {
-            Rectangle boxBounds = box.bounds;
-            for (Room room : rooms) {
-                for (int y = 0; y < room.mapData.length; y++) {
-                    for (int x = 0; x < room.mapData[y].length; x++) {
-                        int tileId = room.mapData[y][x];
-                        if (tileId == 56) {  // Button tile
-                            float worldX = (x + room.offsetX) * TILE_SIZE;
-                            float worldY = (room.mapData.length - y - 1) * TILE_SIZE + (room.offsetY * TILE_SIZE);
-                            Rectangle buttonBounds = new Rectangle(worldX, worldY, TILE_SIZE, TILE_SIZE);
-                            
-                            if (boxBounds.overlaps(buttonBounds) && !buttonPressedByBox) {
-                                buttonPressedByBox = true;
-                                asset56Changed = true;
-                                System.out.println("*********************************");
-                                System.out.println("*     Button pressed by box!    *");
-                                System.out.println("*     For now it works!         *");
-                                System.out.println("*********************************");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Update other game elements
+        // Update saw traps
         for (SawTrap sawTrap : sawTraps) {
             sawTrap.update(deltaTime);
         }
-        
-        for (BoxTrap boxTrap : boxTraps) {
-            boxTrap.update(deltaTime);
-        }
-        
+
         // Update fire hazards
+        for (int i = fireHazards.size - 1; i >= 0; i--) {
+            FireHazard fire = fireHazards.get(i);
+            fire.update(deltaTime);
+            if (!fire.isActive()) {
+                fireHazards.removeIndex(i);
+            }
+        }
+
+        // Spawn new fires
         fireSpawnTimer += deltaTime;
-        if (fireSpawnTimer >= FIRE_SPAWN_INTERVAL && currentFireIndex < fireStartPositions.size) {
+        if (fireSpawnTimer >= FIRE_SPAWN_INTERVAL && !fireStartPositions.isEmpty()) {
+            fireSpawnTimer = 0;
             Vector2 startPos = fireStartPositions.get(currentFireIndex);
             fireHazards.add(new FireHazard(startPos.x, startPos.y));
             currentFireIndex = (currentFireIndex + 1) % fireStartPositions.size;
-            fireSpawnTimer = 0;
         }
 
         // Update teleport cooldown
@@ -244,6 +222,10 @@ public class GameMap implements Disposable {
             if (teleportCooldown <= 0) {
                 isCurrentlyTeleporting = false;
             }
+        }
+
+        for (BoxTrap trap : boxTraps) {
+            trap.update(deltaTime);
         }
     }
 
@@ -504,8 +486,7 @@ public class GameMap implements Disposable {
 
     public void reset() {
         System.out.println("Resetting game...");
-        isGameWon = false;
-        buttonPressedByBox = false;  // Reset button state
+        isGameWon = false;  // Reset victory state
         System.out.println("Resetting boxes...");
         // Reset boxes to original positions
         for (Box box : boxes) {

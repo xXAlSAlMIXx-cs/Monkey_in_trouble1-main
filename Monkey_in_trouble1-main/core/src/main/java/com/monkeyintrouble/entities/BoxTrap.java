@@ -60,7 +60,10 @@ public class BoxTrap {
 
             if (isOverlapping) {
                 isTriggered = true;
-                System.out.println("Box trap triggered! Changing trap to inactive state (30.png) and box to pressed state (41.png)");
+                System.out.println("*********************************");
+                System.out.println("*     Box placed on button!     *");
+                System.out.println("*     The door is now open!     *");
+                System.out.println("*********************************");
             }
         }
     }

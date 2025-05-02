@@ -84,9 +84,14 @@ public class GameUI implements MonkeyObserver {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
-        // Check for R key press to hide victory message
-        if (isGameWon && Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.R)) {
-            showVictoryMessage = false;
+        // Check for R key press to hide victory message or restart game
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.R)) {
+            if (isGameWon) {
+                showVictoryMessage = false;
+                gameScreen.reset();  // Reset the game
+            } else if (isGameOver) {
+                gameScreen.reset();  // Reset the game
+            }
         }
 
         // Draw hearts
